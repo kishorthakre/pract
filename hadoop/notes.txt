@@ -13,3 +13,8 @@ Name Node (Master node, it stores metadata (data related information), Data Node
 It has 3 replicatin factor for fault tolerance.
 Rack is a physical collection of various nodes, generally 30-40 nodes under one rack.
 YARN = manage resource, schedule jobs 
+
+Yarn is comprised of Resource Manager and Node Manager. There is only one Resource Manager which runs on Master Node. There will be multiple Node Managers running on each Data Node. Resource Manager deals with resource management to execute any Job/Application.
+
+https://stackoverflow.com/questions/30967247/difference-between-application-manager-and-application-master-in-yarn#:~:text=Yarn%20is%20comprised%20of%20Resource,to%20execute%20any%20Job%2FApplication 
+
