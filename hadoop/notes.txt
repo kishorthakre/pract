@@ -52,6 +52,6 @@ The NameNode that works and runs in the Hadoop cluster is often referred to as t
 Balancer tool helps achieve this by taking a threshold value as input parameter which is always a fraction between 0 and 1. The HDFS cluster is said to be balanced, if, for every DataNode, the ratio of used space at the node to total capacity of the node differs from the ratio of used space in the cluster to total capacity of the cluster - is not greater than the threshold value.
 
 
-
+https://github.com/Devinterview-io/hadoop-interview-questions
 
 
