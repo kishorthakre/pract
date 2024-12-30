@@ -18,3 +18,28 @@ Yarn is comprised of Resource Manager and Node Manager. There is only one Resour
 
 https://stackoverflow.com/questions/30967247/difference-between-application-manager-and-application-master-in-yarn#:~:text=Yarn%20is%20comprised%20of%20Resource,to%20execute%20any%20Job%2FApplication 
 
+1) How will you measure HDFS space consumed?
+The two popular utilities or commands to measure HDFS space consumed are hdfs dfs –du and hdfs dfsadmin –report. 
+HDFS provides reliable storage by copying data to multiple nodes. The number of copies it creates is usually referred to as the replication factor which is greater than one.
+hdfs dfs –du –This command shows the space consumed by data without replications.
+hdfs dfsadmin –report- This command shows the real disk usage by considering data replication.
+
+
+2) Is it a good practice to use HDFS for multiple small files?
+It is not a good practice to use HDFS for multiple small files because NameNode is an expensive high performance system. Occupying the NameNode space with the unnecessary amount of metadata generated for each of the small multiple files is not sensible. If there is a large file with loads of data, then it is always a wise move to use HDFS because it will occupy less space for metadata and provide optimized performance.
+
+3) I have a file “Sample” on HDFS. How can I copy this file to the local file system?
+This can be accomplished using the following command -
+bin/hadoop fs -copyToLocal /hdfs/source/path /localfs/destination/path
+
+
+4) What do you understand by Inodes?
+HDFS namespace consists of files and directories. Inodes are used to represent these files and directories on the NameNode. Inodes record various attributes like the namespace quota, disk space quota, permissions, modified time and access time.
+
+
+
+
+
+
+
+
