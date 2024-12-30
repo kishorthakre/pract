@@ -1,0 +1,15 @@
+API - Applicatin programming interface
+REST API - Represntational state transfer
+post-create
+get - read 
+put - update 
+delete - delete 
+
+
+Hadoop is an open source framework that allows us to store & process large dta sets in a parallel & distributed manner. 
+Node = 128 MB 
+Two main components HDFS (Hadoop distributed file system is the primry data storage system used by hadoop applications) & MapReduce (used for processing).
+Name Node (Master node, it stores metadata (data related information), Data Node(slave node).
+It has 3 replicatin factor for fault tolerance.
+Rack is a physical collection of various nodes, generally 30-40 nodes under one rack.
+YARN = manage resource, schedule jobs 
