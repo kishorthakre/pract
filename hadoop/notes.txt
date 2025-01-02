@@ -39,15 +39,15 @@ HDFS namespace consists of files and directories. Inodes are used to represent t
 5) Replication causes data redundancy then why is it still preferred in HDFS?
 As we know that Hadoop works on commodity hardware, so there is an increased probability of getting crashed. Thus to make the entire Hadoop system highly tolerant, replication factor is preferred even though it creates multiple copies of the same data at different locations. Data on HDFS is stored in at least 3 different locations. Whenever one copy of the data is corrupted and the other copy of the data is not available due to some technical glitches then the data can be accessed from the third location without any data loss.
 
-8) Data is replicated at least thrice on HDFS. Does it imply that any alterations or calculations done on one copy of the data will be reflected in the other two copies also?
+6) Data is replicated at least thrice on HDFS. Does it imply that any alterations or calculations done on one copy of the data will be reflected in the other two copies also?
 Calculations or any transformations are performed on the original data and do not get reflected to all the copies of data. Master node identifies where the original data is located and performs the calculations. Only if the node is not responding or data is corrupted then it will perform the desired calculations on the second replica.
 
 
-9) What do you understand by Active and Passive NameNodes?
+7) What do you understand by Active and Passive NameNodes?
 
 The NameNode that works and runs in the Hadoop cluster is often referred to as the Active NameNode. Passive NameNode also known as Standby NameNode is the similar to an active NameNode but it comes into action only when the active NameNode fails. Whenever the active NameNode fails, the passive NameNode or the standby NameNode replaces the active NameNode, to ensure that the Hadoop cluster is never without a NameNode.
 
-10) How will you balance the disk space usage on a HDFS cluster?
+8) How will you balance the disk space usage on a HDFS cluster?
 
 Balancer tool helps achieve this by taking a threshold value as input parameter which is always a fraction between 0 and 1. The HDFS cluster is said to be balanced, if, for every DataNode, the ratio of used space at the node to total capacity of the node differs from the ratio of used space in the cluster to total capacity of the cluster - is not greater than the threshold value.
 
