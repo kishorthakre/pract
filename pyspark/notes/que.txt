@@ -4,3 +4,31 @@ for i in dbutils.fs.ls('/mnt/zipfilespath/'):
   with zipfile.ZipFile(i.path.replace('dbfs:','/dbfs'), mode="r") as zip_ref:
     zip_ref.extractall(destination_path)
 
+https://medium.com/@dinesh1.chopra/unveiling-the-battle-apache-parquet-vs-csv-exploring-the-pros-and-cons-of-data-formats-b6bfd8e43107
+
+what is the difference between parquet and csv
+
+Parquet / CSV
+storage efficiency: columnar based  offers compression tech end encoding schemas this reduce storage sparce. 
+
+Performance: Parquet require specific columns, parquet can skip reading irrelevant data, resultiing in faster query execution time. csv files need to read entire rows. 
+
+Data Types and schema evolution: Parquet supports complex data types and nested structures, making it suitable for handling structured and semi-structured data. It also provides support for schema evolution, allowing new columns to be added to existing Parquet files without requiring rewriting the entire dataset. CSV, on the other hand, represents data in a flat, tabular format and does not provide built-in support for complex data types or schema evolution.
+
+Ease of Use and Interoperability: CSV files are widely supported and can be easily opened, viewed, and edited using standard text editors or spreadsheet software. They have a simple, human-readable format and are commonly used for data exchange between different systems. Parquet files, although not directly readable by humans, can be processed by various data processing frameworks and tools that support the Parquet format, such as Apache Spark, Apache Hive, and Apache Arrow.
+
+
+What is Lazy Evaluation?
+What is Lazy Evaluation? Lazy evaluation is a key concept in Apache Spark, where the transformations on data are not immediately executed, but rather their execution is delayed until an action is triggered.
+
+
+explain some optimization techniques in pyspark?
+https://medium.com/@sounder.rahul/pyspark-optimization-techniques-for-data-engineers-df5033778709
+
+
+how to handle skewed data
+https://towardsdatascience.com/data-skew-in-pyspark-783d529a9dd7
+
+
+repartition() versus coalesce()
+Partitions of an existing RDD can be changed using repartition() or coalesce(). These operations can redistribute the RDD based on the number of partitions provided. The repartition() can be used to increase or decrease the number of partitions, but it involves heavy data shuffling across the cluster. On the other hand, coalesce() can be used only to decrease the number of partitions. In most of the cases, coalesce() does not trigger a shuffle. The coalesce() can be used soon after heavy filtering to optimize the execution time. It is important to notice that coalesce() does not always avoid shuffling. If the number of partitions provided is much smaller than the number of available nodes in the cluster then ...
