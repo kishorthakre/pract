@@ -1,0 +1,6 @@
+-how to read zip file in pyspark?
+import zipfile
+for i in dbutils.fs.ls('/mnt/zipfilespath/'):
+  with zipfile.ZipFile(i.path.replace('dbfs:','/dbfs'), mode="r") as zip_ref:
+    zip_ref.extractall(destination_path)
+
