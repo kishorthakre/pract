@@ -32,3 +32,33 @@ https://towardsdatascience.com/data-skew-in-pyspark-783d529a9dd7
 
 repartition() versus coalesce()
 Partitions of an existing RDD can be changed using repartition() or coalesce(). These operations can redistribute the RDD based on the number of partitions provided. The repartition() can be used to increase or decrease the number of partitions, but it involves heavy data shuffling across the cluster. On the other hand, coalesce() can be used only to decrease the number of partitions. In most of the cases, coalesce() does not trigger a shuffle. The coalesce() can be used soon after heavy filtering to optimize the execution time. It is important to notice that coalesce() does not always avoid shuffling. If the number of partitions provided is much smaller than the number of available nodes in the cluster then ...
+
+# select the teachers who teaches only math and not any other subject 
+
+schema = StructType([StructField('teacher', IntegerType(), True),
+                     StructField('subject', StringType(), True)])
+#df = spark.createDataFrame([(1, 'MATH'),(2, 'MATH'),(4, 'CHEM'),(5, 'MATH'),(2, 'ENG'),(3, 'PHY')],['teacher', 'subject'])
+#df.withColumn('teacher', col('teacher').cast('float')).show()
+df = spark.createDataFrame([(1, 'MATH'),(2, 'MATH'),(4, 'CHEM'),(5, 'MATH'),(2, 'ENG'),(3, 'PHY')], schema=schema)
+df.show()
+df.printSchema()
+
+
+#FIND out the companies where renvenue has only increased over the years and there was no decrease at all for any point. 
+data = [('ABC', 2000, 100),
+('ABC', 2001, 110),
+('ABC', 2002, 120),
+('XYZ', 2000, 100),
+('XYZ', 2001, 90),
+('XYZ', 2002, 120),
+('RXC', 2000, 500),
+('RXC', 2001, 400),
+('RXC', 2002, 600),
+('RXC', 2003, 800)]
+schema = StructType([StructField('COMPANY', StringType(), True),
+                     StructField('YEAR', IntegerType(), True),
+                     StructField('REVENUE', IntegerType(), True)]) 
+df = spark.createDataFrame(data=data, schema=schema)
+df.show()
+from pyspark.sql.window import Window
+window = Window.partitionBy('COMPAMY').orderBy('year')
