@@ -62,3 +62,374 @@ df = spark.createDataFrame(data=data, schema=schema)
 df.show()
 from pyspark.sql.window import Window
 window = Window.partitionBy('COMPAMY').orderBy('year')
+
+
+==========================================================
+spark.read.csv('test.csv', header = True)
+df.select('Name').show()
+df.dtypes
+df.withColumn('newcol', df['col']*2)
+df.drop('newcol')
+df.na.drop('col')
+df.na.drop(how='any', subset=['col'])
+df.na.fill('missing values', 'col')
+df.na.fill('missing values', ['col', 'col2'])
+
+from pyspark.ml.feature import Imputer
+imputer = Imputer(inputCols =['col','col2'],
+                  outputCols=['{}_imputed'.format(c) for c in ['col','col2']],
+				  ).setStrategy('mean')
+imputer.fit(df).transfrom(df).show()
+
+df.createOrReplaceTempView('tbl')
+df.filter('col <= 200')
+df.filter(df.col.isNull()).count()
+
+a,b = df.randomSplit([0.5,0.5], 1)
+
+df.groupBy('Name').sum()
+df.agg({'col':'sum'})
+df.groupBy('Name').max()
+upper(df.col)
+
+def func(str):
+	return str.upper()
+ucu = udf(lambda x:func(x), StringType())
+df.withColumn('ncol', ucu(col('name'))).show()
+
+d = df.collect()
+for r in d:
+	print(r['col']+','+str(r['col2'])
+	
+df.collect()[0][0]
+df.select('col').collect()
+
+df.select(col('name.hair'))
+df.select(col('name.*'))
+df.select(expr('fname ||','|| lname').alias('fullname'))
+
+df.sort(df.fname.asc())
+df.select(df.id.cast('int'))
+df.filter(df.id.between(100, 300))
+df.filter(df.id.contains('abc'))
+df.filter(df.id.startswith('K'))
+df.filter(df.lname.isNotNUll())
+df.select(df.fname.substr(1,2))
+
+df.select(when(df.gender == "M", "Male").when(df.gender =='F', 'Female').otherwise(df.gender).alias('newcol')
+
+li = [1,2,3]
+df.filter(df.id.isin(li))
+df.select(df.name.getField('fname'))
+
+data = [(),()]
+rdd = spark.sparkContext.parallelize(data)
+cols = ['col1','col2']
+df = rdd.toDF(cols)
+
+df = spark.createDataFrame(rdd, schema=cols)
+
+rdd = df.rdd
+rdd.collect()
+
+emptyrdd = spark.sparkContext.emptyRDD()
+errd = spark.sparkContext.parallelize([])
+
+
+
+df.select([count(when(col(c).isNotNull(), c)).alias(c) for c in df.columns])
+
+count(when(col(c).contains('None') &col(c).contains('Null') & (col(c) != '') & col(c).isNull(), c))
+
+from pyspark.sql.functions import broadcast
+broadcast_df = broadcast(df)
+resutl = sales_df.join(broadcast_df, on ='category')
+
+from pyspark.sql.window import Window
+window = Window.partitionBy('col')
+df = df.withColumn('sm', sum('salary').over(window))
+
+wnd = Window.partitionBy('col').orderBy(col('col2').desc())
+df = df.withColumn('rank', row_number().over(wnd))
+
+df.select(df.columns[:3])
+df.groupBy('col').sum('salary')
+
+df1.join(df2, df1.col1=df2.col2, 'inner').show(truncate=False)
+df.withColumnRenamed('col', 'colnew')
+df.na.fill('hi',['city'])
+df.na.fill({'col1':'hi', 'col2':'hello'})
+
+df.distinct().count()
+df.dropDuplicates(['col1','col2'])
+df.sort('col1','col2', ascending =[True, True])
+df.orderBy(col('col').asc())
+
+df.select(df.col1 + df.col2)
+spark.read.format('json').option('inferSchema',True).load('filename')
+
+df.select('*', lit('kishor').alias('fname'))
+df1.unionByName(df2)
+df.select('col','col2').union(df1)
+df.select('id', 'name').distinct().count()
+df.drop_duplicates(['col','col2'])
+
+df.count()
+df.select(count('id'))
+df.select(sum('id'))
+df.groupBy('dept').agg(sum('salary'))
+
+df.agg({'col':'avg'}).alias('ncol')
+
+df1 = df.alias('e1')
+df2 = df.alias('e2')
+df3 = df1.join(df2, col('e1.col')==col('e2.col1'),'left')
+
+df.withColumn('new', explode(split(col('location'), ',')))
+
+df.withColumn('col', trim(col('col')))
+
+==============================================================
+
+
+df.dtypes
+df.describe()
+df.withColumn('abc', df['col']+2)
+df.drop('abc')
+spark.stop()
+
+SparkSession.builder.appName('Missing valeus').getOrCreate()
+spark.read.csv('test.csv', header=True, inferSchema= True)
+df.na.drop()
+df.na.drop(how='any')
+df.na.drop(how='all')
+df.na.drop(how='any',thresh=2)
+df.na.drop(how='any', subset=['age'])
+df.na.fill('mv')
+df.na.fill('mv', 'col')
+df.na.fill('mv', ['age','ex'])
+
+from pyspark.ml.feature import Imputer 
+imputer = Imputer(inputCols = ['col','col2'],
+outputCols = ['{}_imputed'.format(c) for c in ['col','col2']]
+).setStrategy(mean)
+imputer.fit(df).transform(df)
+
+df.na.fill(value=0, subset=['var1'])
+
+df.withColumn('Date', to_date(df.Date, 'yyy-MM-dd'))
+Window.partitionBy('store').orderBy('Date')
+df.withColumn('lag_sales', lag(df.sales).over(window)
+
+df.createOrReplaceTempView('new')
+spark.sql("""select count(*) from new""")
+
+df.filter('Salary <= 2000').show()
+df.filter('col < 2000').select(['col','col2'])
+df.filter(~(df['salary'] <= 2000))
+
+df = spark.createDataFrame(data, schema)
+df.filter(df.Name.isNull() | df.City.isNull()).count()
+
+a, b = df.randomSplit([0.5, .5], 1) 
+a.toPandas()
+df.groupBy('Name').sum()
+df.agg({'Salary':'sum'})
+
+
+def uppercase(str):
+    return str.upper()
+from pyspark.sql.types import * 
+up = udf(lambda x: uppercase(x), StringType())
+df.withColumn('cn', up(col('ab')))
+
+datacollect = df.collect()
+for row in datacollect:
+    print(row['dept_name']+','+str(row['dept_id']))
+df.collect()[0][0]
+df.select('col').collect()
+data = [Row(name='James', prop=Row(hair='black',eye='blue'))]
+
+df.select(df.col).show()
+df.select(df['col'])
+df.select(col('col.hair')).show()
+df.select(col('prop.*'))
+
+df.select(df.col.alias('col2'))
+df.select(expr('fname ||','|| lname').alia('fullname'))
+
+df.sort(df.col.asc())
+df.select(df.id.cast('int'))
+df.filter(df.id.between(100, 300))
+df.filter(df.fname.contains('Cruise'))
+df.filter(df.fname.startswith('T'))
+df.filter(df.lname.isNull())
+df.filter(df.lanme.isNotNull())
+
+df.select(df.fname).filter(df.fname.like('%om')).show()
+df.select(df.fname.substr(1,2).alias('ss'))
+df.select(df.fname, when(df.gender == 'M', "Male").otherwise(df.gender).alias('ng'))
+
+df.filter(df.id.isin(li))
+
+df.select(df.name.getField('fname'))
+
+rdd = spark.sparkContext.parallelize(dept)
+df = rdd.toDF()
+df = rdd.toDF(columns)
+
+ddf = spark.createDataFrame(rdd, schema= columns)
+
+dsc=StructType([StructField('col',StringType(), True),
+                StructField('col2',StringType(), True)])
+
+rdd = df.rdd
+rdd.collect()
+
+df.rdd.map(lambda x:[x[0],x[1]*200/100])
+df.collect()
+
+df.filter(col('col').isNotNull()).count()
+df.select([count(when('col').isNotNull(), c)).alias(c) for  c in df.columns])
+
+when(~col(c).contains('None') &
+~col(c).contains('NULL') &
+(col(c) !='') &
+~col(c).isNull(), c))
+
+df.filter(~df.col.contains('None') &
+ ~df.number.contains('NULL') &
+~isnan(df.col) &
+~df.col.isNull()).count()
+
+names = ['Ricky', 'Bunny', 'Coco']
+ages = [10, 15, 20]
+df = spark.createDataFrame(zip(name, ages), ['name', 'age'])
+
+spark.sparkContext.emptyRDD()
+spark.sparkContext.parallelize([])
+
+emptyRDD.toDF(Schema)
+df = spark.createDataFrame([], schema)
+
+
+
+#===========================Interview==================================
+spark.sparkContext.uiWebUrl
+spark.sparkContext.parallelize([])
+emrdd = spark.sparkContext.emptyRDD()
+emrdd.collect()
+
+spark.createDataFrame([], StructType([])
+
+from pyspark.sql.window import Window
+monotonically_increasing_id, row_number
+window = Window.orderBy(monotonically_increasing_id())
+df.withColumn('index', row_number().over(window-1).show()
+
+rdd = spark.sparkContext.parallelize(list(zip(list1,list32)))
+rdd.toDF(['col1','col2'])
+
+sc = spark.sparkContext
+rdd = rdd1.subtract(rdd2)
+rdd.collect()
+
+r1.union(r2)
+r.collect()
+
+qu = df.approxQuantile('col',[0.0,0.25,0.5,0.75,1.0], 0.01)
+qu[0], qu[1],qu[2],qu[4]
+
+df.groupBy('col').count()
+
+t1 = df.groupBy('col').count().orderBy('count', ascending=False).limit(2)
+t = t1.select('col').rdd.flatMap(lambda x:x).collect()
+df.withColumn('col', when(col('col').isin(t), col('col')).otherwise('other'))
+
+df.dropna(subset=['Value'])
+
+df.toDF(*new_names)
+spark.range(10)
+spark.range(10).select(rand().alias('value')
+
+df = df.withColumn('random', ((rand(42)*10)+1).cast('int'))
+df.withColumn('mul3', when(col('col')%3 ==0, 'yes').otherwise('no')
+
+df.filter(col('index').isin(pos))
+df.withColumn('name', initcap(col('name')))
+
+length(df.name)
+
+df = df.withColumn('id', monotonically_increasing_id())
+window = Window.orderBy('id')
+
+df = df.withColumn('prev_value', lag(df.salary).over(window))
+df.withColumn('diff', when(isnull(df.salary-df.prev_value),0).otherwise(df.salary-df.prev_value).drop('id')
+
+df.withColumn('date_1', to_date(df.date_str_1, 'yyy-MM-dd'))
+df.withColumn('date_2', to_date(df.date_str_2, 'dd MMM yyy'))
+
+df.where((length(col('word')) - length(translate(col('word'),'AEIOUaeiou',''))) >= 2)
+
+df.where(df.id.isNull()).count()
+df.select([count(when(col(c).isNull(), c)) for c in df.columns])
+df1.collect()[0].asDict()
+
+pivot_df = df.groupBy('year','quarter').pivot('region').sum('revenue')
+unpvt = 'stact(2,'Eu',Eu, 'US', US) as (region, revenue)"
+unpvt = df.select('year','quarter', expr(unpvt)).where('revenue is not null')
+
+df.fillna(0)
+
+def to_lower(s):
+    if s is not None:
+        return s.lower()
+udf = udf(to_lower, StringType())
+df.withColumn('col', udf(df.city))
+
+conf = SparkConf()
+conf.set('spark.executor.cores', '2')
+sc = SparkContext(conf = conf)
+
+df.cache()
+df.unpersist()
+
+df.withColumn('col', col('col').cast(DateType()))
+
+sales.join(menu, 'product_id').groupBy('customer_id').agg(sum('price')).
+withColumnRenamed('sum(price)', 'totalamount').orderBy('customer_id')
+
+df.agg(sum('total_rev').alias('tr')).collect()[0]['tr']
+
+df.select(split(col('value'), '')
+df.select(explode(col('value')))
+df.select(lower(col('value')))
+df.select(regexp_extract(col('value'), '[a-z]+',0))
+df.filter(col('value') != '')
+
+df.groupBy('name').agg(collect_list(struct('col','col2'))).orderBy('name')
+
+df.agg(countDistinct(col('col')))
+
+df.withColumn('Result', coalesce(col('city'), col('city2')))
+
+unix_timestamp('click_time')
+
+window = Window.partitionBy('user_id').orderBy('click_timek')
+
+rank().over(Window.orderBy(df.salary.desc())))
+
+df.select('*', lit('kishor').alias('last_name'))
+
+df.distinct().count()
+df.select('id','name').distinct()
+
+df.drop_duplicates(['id','name'])
+df.sort(col('salary').desc())
+
+
+df.na.fill(value = 0)
+df.na.fill(value=0, subset=['col'])
+df.na.fill('')
+df.na.fill('hi',['col1']).na.fill('hello',['col2'])
+
