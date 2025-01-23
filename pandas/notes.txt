@@ -1,0 +1,63 @@
+
+
+pd.DataFrame(data)
+df.isnull()
+df.dropna()
+df.dropna(axis=1)
+df.dropna(how='all')
+df.dropna(subset=['Age'])
+pd.read_csv(url,sep='\t')
+
+float(value[1:-1])[for value in df.price]
+df.drop_duplicates(['col1','col2'])
+df[df.col ==1]
+df[df['col']>10].col2.nunique()
+
+df.sort_values(by='col', ascending=False)
+len(df[df.col == 'abc'])
+df[(df.item = 'can') & (df.quantity > 1)]
+
+df[df.team.str.startswith("G")]
+df.iloc[:, 0:7]
+df.iloc[:, 0:-3]
+
+df.loc[df.Team.isin(['uk','itl','rs']), ['Team','accuracy']]
+df.set_index('col', inplace=True)
+df.loc[['val','val'],['col','col1','col2']
+
+df.loc[['tax','ari'],:]
+
+df.shape[0]
+df.info()
+df.columns.tolist()
+df.groupby('col').sum(numeric_only=True)
+df.sort_values(['col'], ascending=False)
+df.col.sum()
+df.col.dtype
+lmd = lambda x:float(x[1:-1])
+df.col.apply(lmd)
+
+df.col.nunique()
+df.col.value_counts().tail()
+
+df.groupby('col').beer.mean()
+df.groupby('col').beer.describe()
+df.groupby('col').col.agg(['mean', 'min', 'max'])
+
+df.iloc[:2,:]
+df[df['col'].isin(['a','b'])]
+df.at[2, 'age'] = None
+df['col'].apply(lambda x:x*2)
+df.pivot(index='date', columns='col', values = 'value')
+
+df.loc[['a','z'], :]
+df.loc[['a','z'], ['city','marks']]
+
+df.reindex(new_idx)
+df=pd.read_excel('abc.xlsx)
+df.to_csv('z.csv',index=None, header=True)
+
+df.rename(columns = {'name':'new_name'}, inplace = True)
+
+
+ACID = atomicity, consistency, isolation, durability 
