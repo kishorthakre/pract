@@ -382,3 +382,321 @@ where TABLE_NAME='student';
 --select *, row_number() over(order by(select 1) ) as num from student t
 
 select * from (select *, row_number() over(order by(select 1) ) as num from student t) k where num = 4;
+
+----===============================================================
+
+CREATE TABLE GFG_Employees (
+   id INT PRIMARY KEY,
+   name VARCHAR (20) ,
+   email VARCHAR (25),
+   department VARCHAR(20)
+);
+INSERT INTO GFG_Employees (id, name, email, department) VALUES 
+(1, 'Jessie', 'jessie23@gmail.com', 'Development'),
+(2, 'Praveen', 'praveen_dagger@yahoo.com', 'HR'),
+(3, 'Bisa', 'dragonBall@gmail.com', 'Sales'),
+(4, 'Rithvik', 'msvv@hotmail.com', 'IT'),
+(5, 'Suraj', 'srjsunny@gmail.com', 'Quality Assurance'),
+(6, 'Om', 'OmShukla@yahoo.com', 'IT'),
+(7, 'Naruto', 'uzumaki@konoha.com', 'Development');
+
+Select * From GFG_Employees;
+
+-- Deleting single record
+delete from GFG_Employees where name = 'Suraj';
+
+-- Deleting all of the records
+delete from GFG_Employees
+
+-- If needed, you can rollback the deletion
+--START TRANSACTION;
+--DELETE FROM GFG_Employees WHERE department = 'Development';
+--ROLLBACK;
+
+--==================================================================
+
+-- Inner Join how many rows will be created?
+create table tab1(id int);
+insert into tab1(id) values(1),(2),(3),(2),(4);
+
+create table tab2(id int);
+insert into tab2 (id) values(1),(2),(2),(3);
+
+select * from tab1;
+select * from tab2;
+
+select * from tab1 inner join tab2 on tab1.id = tab2.id;
+
+--======================================================
+-- remove duplicate name and keep latest record
+create table emp2(emp_name varchar(25), doj date);
+insert into emp2(emp_name, doj) values('James', '2020-01-06'),
+                                      ('Michael', '2023-08-14'),
+									  ('Robert', '2014-06-09'),
+									  ('James', '2023-07-01'),
+									  ('Robert', '2020-01-01'),
+									  ('Jen', '2015-08-15')
+select * from emp2;
+select * from (select *, row_number() over(partition by emp_name order by doj desc) as a1 from emp2) t1 where a1=1;
+
+--====================================
+
+create table table1(id int);
+insert into table1 (id) values (null),(null);
+
+create table table2 (id int);
+insert into table2 (id) values (null),(null),(null);
+
+select * from table1;
+select * from table2;
+
+select t1.id, t2.id from table1 t1 inner join table2 t2 on t1.id = t2.id;
+select t1.id, t2.id from table1 t1 left join table2 t2 on t1.id = t2.id;
+select t1.id, t2.id from table1 t1 right join table2 t2 on t1.id = t2.id;
+select t1.id, t2.id from table1 t1 cross join table2 t2 ;
+
+select t1.id, t2.id from table1 t1 full outer join table2 t2 on t1.id = t2.id;
+
+--===========================
+
+--difference between count(*) & count(1)
+
+create table depart (dept_id int identity(201, 1), dept_name varchar(20));
+insert into depart (dept_name) values('IT'),('SALES'),('HR'), (NULL), ('MKTG');
+
+select * from depart;
+select count(*) from depart;
+select count(dept_name) from depart;
+
+--==========================================================
+
+create table t4 (name varchar(25), mark int);
+insert into t4 (name, mark) values('a',5), ('b',10), ('b',10), ('b',20), ('c',20), ('d',30);
+
+update t4 set mark = 20 where name = 'b' and mark = 30;
+
+select * from (select *, rank() over(order by mark asc) rnk from t4) a1;
+select * from (select *, dense_rank() over(order by mark asc) d_rnk from t4) a1;
+select * from (select *, row_number() over(order by mark asc) rw_no from t4) a1;
+
+select * from (select *, rank() over(partition by name order by mark asc) rnk from t4) a1;
+select * from (select *, dense_rank() over(partition by name order by mark asc) d_rnk from t4) a1;
+select * from (select *, row_number() over(partition by name order by mark asc) rw_no from t4) a1;
+
+select * from (select *, lag(mark) over(partition by name order by mark asc) d_rnk from t4) a1;
+select * from (select *, lead(mark) over(partition by name order by mark asc) rw_no from t4) a1;
+
+--=========================================================
+
+create table e1 (emp_id int, dept_id int, last_name varchar(25), salary int)
+insert into e1 (emp_id, dept_id, last_name, salary) values 
+               (201, 20, 'Hartstein', 13000),
+			   (114, 30, 'Raphaely', 11000),
+			   (123, 50, 'Vollman', 6500),
+			   (122, 50, 'Kaufling', 7900),
+			   (120, 50, 'Weiss', 8000),
+			   (121, 50, 'Fripp', 8200),
+			   (103, 60, 'Hunold', 9000),
+			   (147, 80, 'Errazuriz', 12000),
+			   (146, 80, 'Partners', 13500),
+			   (145, 80, 'Russell', 14000),
+			   (100, 90, 'King', 24000),
+			   (108, 100, 'Greenberg', 12000)
+select * from e1;
+
+-- Which employees reeive more than the average salary of their department?
+select e.emp_id, e.dept_id, e.last_name, e.salary from e1 e 
+where e.salary > (select avg(i.salary) from e1 i where e.dept_id = i.dept_id)
+
+-- ===============================================================================
+
+--To swap the values in the gender column of the student table where the gender is 'female' and 'male'
+create table j21(eno int, ename char(25), mgrno int, gender char(25));
+insert into j21(eno, ename, mgrno, gender) values (10, 'Anil', Null, 'Male'),
+                                      (20, 'Pavan', 10, 'Male'),
+									  (30, 'Sunil', 20, 'Male'),
+									  (40, 'Kumar', 10, 'Male'),
+									  (50, 'Vijay', 20, 'Male'),
+									  (42, 'Vijaya', 28, 'FeMale')
+select * from j21;
+update j21 set gender =(case gender when 'Male' then 'Female' else 'Male' end);
+select * from j21;
+
+--=================================================================
+
+-- Write a query to display the names of teachers who teach the math subject only.
+create table t21 (i_id int, sub char(25));
+insert into t21(i_id, sub) values (1, 'Math'),(2, 'Math'), (4, 'CHEM'), (5, 'Math'), (2, 'ENG'), (3, 'PHY');
+select * from t21;
+
+select * from t21 where sub = 'Math' and i_id in (select i_id from t21 group by i_id having count(i_id) = 1); 
+
+--===================================================
+
+-- call duration 
+
+create table c22(p1 int, p2 int, duration int);
+insert into c22(p1, p2, duration) values (10, 20, 58), (20, 10, 12), (10, 30, 20), (30,40,100),
+                                         (30, 40, 200), (30, 40, 200), (40, 30, 500)
+select * from c22;
+
+select p1, p2, count(duration) as call_count, sum(duration) as total_duration
+from (select * from c22 union all select p1, p2, duration from c22) t1 where p1 < p2 group by p1, p2;
+
+--========================
+create table n21 (id int, fname char(25), lname char(25));
+insert into n21 (id, fname, lname) values(1, 'Ram', Null), (1, Null, 'Kumar'), (2, 'Shyam', Null), (2, Null, 'Kumar'), (3, 'Sita', Null)
+select * from n21;
+
+select id, max(fname) as fname, max(lname) as lname from n21 group by id;
+
+--=====================================================
+
+--Find out the companies where revenue has only increased over the years and there was no decrease at all for any point. 
+create table c21(company char(25), year int, revenue int);
+insert into c21(company, year, revenue) values ('ABC', 2000, 100), ('ABC', 2001, 110), ('ABC', 2002, 120),
+                                               ('XYZ', 2000, 100), ('XYZ', 2001, 90), ('XYZ', 2002, 120), 
+											   ('RXC', 2000, 500),('RXC', 2001, 400),('RXC', 2002, 600),('RXC', 2003, 800)
+select * from c21;
+
+select * from c21 
+where company in (select company from (select company, (revenue-lag(revenue, 1, 0) over (partition by company order by year)) diff from c21) t
+group by company having min(diff) > 0 );
+
+
+--================================================
+
+CREATE TABLE employees1 (
+	id INT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL,
+	salary INT
+);
+
+INSERT INTO employees1 (id, name, salary) VALUES (1, 'Sangeeta', 100000);
+INSERT INTO employees1 (id, name, salary) VALUES (2, 'Ranjita', 150000);
+INSERT INTO employees1 (id, name, salary) VALUES (3, 'Anita', 70000);
+INSERT INTO employees1 (id, name, salary) VALUES (4, 'Sunita', 50000);
+INSERT INTO employees1 (id, name, salary) VALUES (5, 'Anjeeta', 90000);
+
+select * from employees1;
+
+--Write a SQL query to find the second-highest salary from an employee table.
+select max(salary) from employees1 where salary < (select max(salary) from employees1);
+
+--SELECT DISTINCT(SALARY) FROM employees1 ORDER BY SALARY DESC LIMIT 1,1; 
+
+--=================================================
+
+CREATE TABLE employees2 (
+	employee_id INT PRIMARY KEY,
+	name VARCHAR(50));
+
+INSERT INTO employees2 (employee_id, name)
+VALUES
+	(1, 'Raghav'),
+	(2, 'Raashi'),
+	(3, 'Rohan'),
+	(4, 'Mohan');
+
+CREATE TABLE projects (
+	project_id INT PRIMARY KEY,
+	name VARCHAR(50),
+	employee_id INT,
+	FOREIGN KEY (employee_id) REFERENCES employees2(employee_id)
+);
+
+INSERT INTO projects (project_id, name, employee_id)
+VALUES
+	(1, 'Project A', 1),
+	(2, 'Project B', 2),
+	(3, 'Project C', 1),
+	(4, 'Project D', 3);
+
+select * from employees2;
+select * from projects;
+--Write a SQL query to find the names of employees who have not been assigned to any project.
+
+select name from employees2 where employee_id not in (select employee_id from projects);
+select e.name from employees2 e left join projects on e.employee_id = projects.employee_id where projects.employee_id is null;
+
+--================================================
+
+CREATE TABLE Student1 (
+	id INT NOT NULL,
+	name VARCHAR(50) NOT NULL,
+	marks VARCHAR(255) NOT NULL,
+	PRIMARY KEY (id)
+);
+INSERT INTO Student1 (id, name, marks)
+VALUES (1, 'Rohit', '87,92,76,89');
+
+
+-- Student table, the marks column contains a list of values separated by commas. 
+--    How can you determine the number of values in this comma-separated list?
+
+select * from student1;
+SELECT id, name, marks, LEN(marks) - LEN(REPLACE(marks, ',', '')) + 1 AS num_marks FROM Student1 WHERE id = 1;
+
+--=======================================================================
+
+CREATE TABLE employees (
+	id INT NOT NULL,
+	name VARCHAR(50) NOT NULL,
+	annual_salary DECIMAL(10, 2) NOT NULL,
+	PRIMARY KEY (id)
+);
+INSERT INTO employees (id, name, annual_salary)
+VALUES (1, 'Muskan', 60000);
+
+INSERT INTO employees (id, name, annual_salary)
+VALUES (2, 'Pallavi', 75000);
+
+INSERT INTO employees (id, name, annual_salary)
+VALUES (3, 'Raashi', 90000);
+
+select * from employees;
+--Display the monthly Salary of Employees given annual salary.
+select annual_salary / 12 as monthly_salary from employees;
+
+---==========================================================
+
+--How do you delete duplicate rows in SQL?
+--with ctl as (select col_name, row_number() over(partition By col_name order by col_name) as row_num from tbl) 
+--delete from ctl where row_num > 1;
+
+
+--COALESCE Function: The COALESCE() function returns the first non-NULL value in a list of expressions.
+
+--SELECT COALESCE(phone_number, 'Not Available') FROM contacts;
+
+--IFNULL() or ISNULL(): These functions can be used to replace NULL values with a specified value.
+
+--SELECT ISNULL(salary, 0) FROM employees;
+
+https://medium.com/@nirajan_DataAnalyst/15-common-sql-coding-interview-questions-and-answers-2024-e9e60cb4bd6b 
+
+CREATE TABLE p25 (
+	project_id INT PRIMARY KEY,
+	name VARCHAR(50),
+	employee_id INT,
+	FOREIGN KEY (employee_id) REFERENCES employees2(employee_id)
+);
+
+INSERT INTO p25 (project_id, name, employee_id)
+VALUES
+	(1, 'Project A', 1),
+	(2, 'Project B', 2),
+	(3, 'Project C', 1),
+	(4, 'Project D', 3),
+	(5, 'Project C', 1),
+	(6, 'Project C', 1),
+	(7, 'Project D', 3);
+select * from p25;
+
+-- Find unique records 
+select distinct name, employee_id from p25 order by employee_id;
+select name, employee_id from p25 group by name, employee_id order by employee_id ;
+select * from (select *, row_number() over(partition by name order by employee_id) a1 from p25) a2 where employee_id=1 ;
+
+--=======================================
+
