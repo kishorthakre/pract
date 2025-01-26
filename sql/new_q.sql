@@ -1,6 +1,48 @@
+﻿
+
+use newtest1
+/*
+𝐒𝐐𝐋 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬:
+
+1, How would you differentiate between a Primary Key, a Natural Key, and a Surrogate Key in a database schema?
+2, Given two tables, how would you find the count of records using INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL OUTER JOIN?
+3, Write a SQL query to delete the 10th highest salary from the employee table?
+4, How would you find the top 3 highest-paid employees in an organization?
+5, How can you optimize an SQL query?
+7, Write a SQL query to calculate the average salary of employees in each department?
+8, Explain how you would handle NULL values in JOIN operations in SQL?
+*/
+
+--6, Write a SQL query to retrieve unique records without using DISTINCT or GROUP BY?
+select distinct name, employee_id from p25 order by employee_id;
+select name, employee_id from p25 group by name, employee_id order by employee_id ;
+select * from (select *, row_number() over(partition by name order by employee_id) a1 from p25) a2 where employee_id=1 ;
 
 
-  select salary as SecondHighestSalary from (select salary, rank() over(order by salary desc) as s1 from Employee) as s2 where s1 = 2; 
+-- 1741. Find Total Time Spent by Each Employee
+
+CREATE TABLE e26 (
+	emp_id INT,
+	event_day VARCHAR(50),
+	in_time INT,
+	out_time INT);
+insert into e26(emp_id , event_day , in_time, out_time) values 
+                                       (1, '2020-11-28', 4 , 32 ),
+									   (1, '2020-11-28', 55, 200),
+									   (1, '2020-12-03', 1 , 42 ),
+									   (2, '2020-11-28', 3 , 33 ),
+									   (2, '2020-12-09', 47, 74 )
+select * from e26;
+
+select  day, emp_id, (otime-itime) as total_time from 
+(select event_day as day, emp_id, sum(in_time) as itime, sum(out_time) as otime from e26 group by emp_id, event_day) a;
+
+
+--==============================
+
+
+
+select salary as SecondHighestSalary from (select salary, rank() over(order by salary desc) as s1 from Employee) as s2 where s1 = 2; 
 /* Write your T-SQL query statement below */
 select max(salary) as SecondHighestSalary from Employee where salary< (select max(salary) from employee);
 
@@ -59,7 +101,8 @@ select  distinct(author_id) as id from (select * from Views where author_id=view
 
 
 --1581. Customer Who Visited but Did Not Make Any Transactions
-select customer_id, count(customer_id) as count_no_trans from visits where visit_id not in(select visit_id from transactions ) group by customer_id order by count(customer_id);
+select customer_id, count(customer_id) as count_no_trans from visits 
+where visit_id not in(select visit_id from transactions ) group by customer_id order by count(customer_id);
 
 
 --570. Managers with at Least 5 Direct Reports 
