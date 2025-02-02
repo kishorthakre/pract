@@ -693,10 +693,318 @@ VALUES
 	(7, 'Project D', 3);
 select * from p25;
 
--- Find unique records 
+--  Write a SQL query to retrieve unique records without using DISTINCT or GROUP BY?
 select distinct name, employee_id from p25 order by employee_id;
 select name, employee_id from p25 group by name, employee_id order by employee_id ;
 select * from (select *, row_number() over(partition by name order by employee_id) a1 from p25) a2 where employee_id=1 ;
 
 --=======================================
 
+--Find the employees earning more than managers
+create table e27 (id int, name varchar(25), salary int, mid int);
+insert into e27 (id, name, salary, mid) values (1, 'John', 6000, 4),
+                                                (2, 'Kevin', 11000, 4),
+												(3, 'Bob', 8000, 5),
+												(4, 'Laura', 9000, Null),
+												(5, 'Sarah', 10000, Null)
+select * from e27;
+select emp.* from e27 emp join e27 mgr on emp.mid = mgr.id where emp.salary > mgr.salary;
+--===============================
+
+-- 1741. Find Total Time Spent by Each Employee.
+
+CREATE TABLE e26 (
+	emp_id INT,
+	event_day VARCHAR(50),
+	in_time INT,
+	out_time INT);
+insert into e26(emp_id , event_day , in_time, out_time) values 
+                                       (1, '2020-11-28', 4 , 32 ),
+									   (1, '2020-11-28', 55, 200),
+									   (1, '2020-12-03', 1 , 42 ),
+									   (2, '2020-11-28', 3 , 33 ),
+									   (2, '2020-12-09', 47, 74 )
+select * from e26;
+
+select  day, emp_id, (otime-itime) as total_time from 
+(select event_day as day, emp_id, sum(in_time) as itime, sum(out_time) as otime from e26 group by emp_id, event_day) a;
+
+--==========================================
+
+create table e102 (employee_id int, fname varchar(25), lname varchar(25), department_id int, Manager_id int);
+insert into e102 (employee_id, fname, lname, department_id, Manager_id) values (1, 'John', 'Doe', 1, 3), 
+                                                        (2, 'Jane', 'Smith', 2, 3),
+														(3, 'Adam', 'Johnson', 1, Null),
+														(4, 'Emily', 'Davis', 2, 3),
+														(5, 'Michael', 'Brown', 1, 3),
+														(6, 'Sarah', 'Wilson', 2, 3),
+														(7, 'David', 'Lee', 1, 3),
+														(8, 'Laura', 'Garcia', 2, 3),
+														(9, 'Ashley', 'MartineZ', 4, 10),
+														(10, 'Christopher', 'Anderson', 4, Null),
+														(11, 'Jessika', 'Taylor', 4, 10),
+														(12, 'Mattew', 'Thomas', 4, 10)
+
+create table d102(department_id int, department_name varchar(25));
+insert into d102 (department_id, department_name) values(1, 'Marketing'),(2,'Sales'),(3,'Finance'),(4, 'Human Resources');
+
+-- Write a SQL query to retrieve employee details along with their department and manager information from three tables: 
+-- employees, departments, and employees (self-join for manager).
+select * from e102;
+select * from d102;
+
+select e.employee_id, concat(e.fname,' ', e.lname) as employee_name, d.department_name ,
+coalesce(concat(m.fname, ' ', m.lname), 'N/A') as manager_name
+from e102 e inner join d102 d 
+on e.department_id = d.department_id
+left join 
+e102 m on m.employee_id = e.Manager_id;
+
+--===============================================================================
+
+create table r202 (order_id int, prod_cat varchar(25), order_amnt int);
+insert into r202 (order_id, prod_cat, order_amnt) values (1, 'Electronics', 500),
+                                    (2, 'Clothing', 200),
+									(3, 'Electronics', 800),
+									(4, 'Electronics', 700),
+									(5, 'Clothing', 300),
+									(6, 'Electronics', 600),
+									(7, 'Books', 150),
+									(8, 'Clothing', 400),
+									(9, 'Books', 250),
+									(10, 'Electronics', 900),
+									(11, 'Electronics', 750),
+									(12, 'Clothing', 350),
+									(13, 'Electronics', 1000),
+									(14, 'Books', 200),
+									(15, 'Clothing', 450),
+									(16, 'Electronics', 850),
+									(17, 'Electronics', 950),
+									(18, 'Clothing', 500),
+									(19, 'Books', 300),
+									(20, 'Electronics', 1200)
+
+-- Calculate the total sales revenue for each product category, including the number of orders and average order value, from a sales database.
+select * from r202;
+
+select prod_cat, 
+count(order_id) as num_orders,
+sum(order_amnt) as total_revenue, 
+avg(order_amnt) as total_revenue
+from r202 group by prod_cat
+
+--======================================================
+
+create table u202 (intr_id int, post_id int, user_id int, inter_type varchar(25));
+insert into u202(intr_id, post_id, user_id, inter_type) values
+									(1, 101, 1, 'Like'),
+ 									(2, 102 ,2, 'Like'),
+									(3, 103 ,3, 'Comment'),
+									(4, 104, 1, 'Share'),
+									(5, 105,2, 'Like'),
+									(6, 106,3, 'Share'),
+									(7, 107,1, 'Comment'),
+									(8, 108,2, 'Like'),
+									(9, 109,3, 'Comment'),
+									(10, 110,1, 'Like')
+/*
+Let’s write a complex query to calculate the following metrics for each post:
+- Total number of likes, comments, and shares.
+- Number of unique users who interacted with the post.
+- Average number of interactions per user.   */
+select * from u202;
+select user_id, 
+count(case when inter_type = 'Like' then 1 end) as num_likes,
+count(case when inter_type = 'Comment' then 1 end) as num_comments,
+count(case when inter_type = 'Share' then 1 end) as num_shares,
+count(distinct(user_id)) as num_unique_users,
+count(*) /count(distinct(user_id)) as avg_interactions_per_user
+from u202 group by user_id ;
+
+--==========================================================
+
+create table esalary202 (emp_id int, dep_id int, salary int);
+insert into esalary202(emp_id, dep_id, salary) values
+(2, 1, 6000),
+(3, 1, 5500),
+(1, 1, 5000),
+(6, 2, 6500),
+(5, 2, 5800),
+(4, 2, 6200),
+(8, 3, 7200),
+(9, 3, 6900),
+(7, 3, 7000),
+(10, 4, 5300)
+
+--Determine the top highest-paid employees in each department based on their salary, using the RANK() window function.
+
+select * from esalary202;
+select emp_id, dep_id, salary , rank() over(partition by dep_id order by salary desc) as a1 from esalary202;
+
+--========================================
+
+create table prod202 (prod_id int, prod_name varchar(25), Prod_cat varchar(25));
+insert into prod202 (prod_id,prod_name,Prod_cat) values  
+(1, 'ProductA', 'Category 1'),
+(2, 'ProductB', 'Category 1'),
+(3, 'ProductC', 'Category 1'),
+(4, 'ProductD', 'Category 2'),
+(5, 'ProductE', 'Category 2'),
+(6, 'ProductF', 'Category 2')
+
+create table sale202 (sale_id int, prod_id int, revenue int);
+insert into sale202 (sale_id,prod_id,revenue) values  
+(1, 1, 100),
+(2, 1, 150),
+(3, 2, 200),
+(4, 2, 250),
+(5, 3, 300),
+(6, 3, 350),
+(7, 4, 400),
+(8, 4, 450),
+(9, 5, 500),
+(10,5, 550),
+(11,6, 600),
+(12,6, 650)
+
+--Rank the products based on their total revenue, assigning a rank to 
+--each product category, and display the top 3 products within each category.
+select * from prod202;
+select * from sale202;
+
+with prod_revenue_rank as (
+select p.prod_id, p.prod_name, p.Prod_cat,
+sum(s.revenue) as total_revenue, 
+rank() over(partition by p.prod_cat order by sum(s.revenue) desc) as rev_rank
+from prod202 p inner join sale202 s
+on p.prod_id = s.prod_id
+group by p.prod_id, p.prod_name, p.Prod_cat
+)
+select * from prod_revenue_rank where rev_rank <= 3;
+
+--=========================
+
+create table mva202 (sale_id int, prod_id int, revenue int, date date);
+insert into mva202 (sale_id,prod_id,revenue, date) values  
+(1, 1, 100, '2024-01-01'),
+(2, 1, 150, '2024-01-02'),
+(3, 2, 200, '2024-01-03'),
+(4, 2, 250, '2024-01-04'),
+(5, 3, 300, '2024-01-05'),
+(6, 3, 350, '2024-01-06'),
+(7, 4, 400, '2024-01-07'),
+(8, 4, 450, '2024-01-08'),
+(9, 5, 500, '2024-01-09'),
+(10,5, 550, '2024-01-10'),
+(11,6, 600, '2024-01-11'),
+(12,6, 650, '2024-01-12')
+
+--Calculate the 7-day moving average of daily sales revenue for each product, considering the past 7 days of sales data for each day.
+select * from mva202;
+
+select *, avg(revenue)
+over(partition by prod_id order by date rows between 6 preceding and current row) as '7_day_moving_avg'
+from mva202 order by prod_id , date;
+
+--===================================================
+
+create table tper202 (sale_id int, sales_repr varchar(25), region varchar(25), revenue int);
+insert into tper202 (sale_id,sales_repr,region, revenue) values  
+(1,  'John', 'North', 100),
+(2,  'Sarah', 'South', 150),
+(3,  'John', 'North', 200),
+(4,  'Michael', 'East', 250),
+(5,  'Sarah', 'South', 300),
+(6,  'Emily', 'East', 350),
+(7,  'Michael', 'East', 400),
+(8,  'John', 'North', 450),
+(9,  'Sarah', 'South', 500),
+(10, 'Emily', 'East', 550),
+(11, 'Michael', 'East', 600),
+(12, 'John', 'North', 650)
+
+--Identify the top-performing sales representatives by comparing their total sales revenue to the average revenue for all sales representatives, partitioning by region.
+
+select sales_repr, region, revenue,
+case when revenue > avg_revenue then 'Top Performer' else 'Regular Performer'
+end as performer_status
+from
+(select sales_repr, region, revenue,
+avg(revenue) over(partition by region) as avg_revenue
+from tper202) as s1;
+
+--============================================
+create table trends202 (sale_id int, prod_cat varchar(25), sale_year int, revenue int);
+insert into trends202 (sale_id, prod_cat, sale_year, revenue) values 
+                                    (1, 'Electronics', 2020, 100),
+                                    (2, 'Electronics', 2021, 150),
+									(3, 'Clothing', 2020, 200),
+									(4, 'Clothing', 2021, 250),
+									(5, 'Electronics', 2020, 300),
+									(6, 'Electronics', 2021, 350),
+									(7, 'Clothing', 2020, 400),
+									(8, 'Clothing', 2021, 450),
+									(9, 'Electronics', 2020, 500),
+									(10, 'Electronics', 2021, 550),
+									(11, 'Clothing', 2020, 600),
+									(12, 'Clothing', 2021, 650)
+-- Calculate the year-over-year growth rate of sales revenue for each product category, 
+--  comparing the current year’s revenue to the previous year’s revenue.
+
+select prod_cat,sale_year, revenue,
+(revenue - lag(revenue) over(partition by prod_cat order by sale_year)) / lag(revenue) over(partition by prod_cat order by sale_year) as growth_rate
+from trends202
+order by prod_cat, sale_year;
+
+--======================================================================
+
+create table cte202 (employee_id int, ename varchar(25), m_id int);
+insert into cte202 (employee_id, ename, m_id) values 
+            (1, 'John',  3), 
+            (2, 'Jane',  3),
+			(3, 'Adam',  Null),
+			(4, 'Emily',  3),
+			(5, 'Michael', 4),
+			(6, 'Sarah', 4),
+			(7, 'David',  3),
+			(8, 'Laura', 4)
+--Write a recursive CTE to generate a hierarchical report showing the organizational structure of employees,
+--including their direct and indirect managers.
+select * from cte202;
+
+WITH RECURSIVE EmployeeHierarchy AS (
+    SELECT employee_id, ename, m_id, 0 AS level
+    FROM cte202
+    WHERE m_id IS NULL
+    UNION ALL
+    SELECT e.employee_id, e.ename, e.m_id, eh.level + 1
+    FROM cte202 e
+    INNER JOIN EmployeeHierarchy eh ON e.m_id = eh.m_id
+)
+SELECT 
+    employee_id,
+    ename,
+    m_id,
+    level
+FROM 
+    EmployeeHierarchy;
+
+--================================
+
+create table c202 (sales_repr varchar(25), region varchar(25), sales_amount int);
+insert into c202 (sales_repr, region, sales_amount) values 
+            ('John', 'North', 1000), 
+            ('Bob', 'North', 1200),
+			('Charlie', 'South',  800),
+			('David', 'South',  900),
+			('Emily', 'East', 1500),
+			('Frank', 'East', 1800)
+--Find the sales representatives who have achieved sales greater than the average sales of their respective regions, using a correlated subquery.
+
+select sales_repr, region, sales_amount 
+from c202 s1
+where sales_amount > ( select avg(sales_amount) from c202 s2 where s1.region=s2.region) order by region, sales_amount desc;
+
+--=========================================================
+
+https://medium.com/@gunjansinghtandon/essential-sql-interview-questions-for-data-engineers-a3691c18f52e
