@@ -13,29 +13,11 @@ use newtest1
 8, Explain how you would handle NULL values in JOIN operations in SQL?
 */
 
---6, Write a SQL query to retrieve unique records without using DISTINCT or GROUP BY?
-select distinct name, employee_id from p25 order by employee_id;
-select name, employee_id from p25 group by name, employee_id order by employee_id ;
-select * from (select *, row_number() over(partition by name order by employee_id) a1 from p25) a2 where employee_id=1 ;
 
 
--- 1741. Find Total Time Spent by Each Employee
 
-CREATE TABLE e26 (
-	emp_id INT,
-	event_day VARCHAR(50),
-	in_time INT,
-	out_time INT);
-insert into e26(emp_id , event_day , in_time, out_time) values 
-                                       (1, '2020-11-28', 4 , 32 ),
-									   (1, '2020-11-28', 55, 200),
-									   (1, '2020-12-03', 1 , 42 ),
-									   (2, '2020-11-28', 3 , 33 ),
-									   (2, '2020-12-09', 47, 74 )
-select * from e26;
 
-select  day, emp_id, (otime-itime) as total_time from 
-(select event_day as day, emp_id, sum(in_time) as itime, sum(out_time) as otime from e26 group by emp_id, event_day) a;
+
 
 
 --==============================
@@ -172,3 +154,35 @@ SELECT MAX(SALARY * MONTHS), COUNT(EMPLOYEE_ID) FROM EMPLOYEE WHERE(SALARY * MON
 
 select CAST(sum(lat_n) as decimal(18,2)), CAST(sum(long_w) as decimal(18,2)) from station;
 
+
+
+sql basic joins
+
+1378. Replace Employee ID With The Unique Identifier
+select eu.unique_id, e.name from Employees e left join EmployeeUNI eu on e.id=eu.id ;
+
+1581. Customer Who Visited but Did Not Make Any Transactions
+select v.customer_id, count(customer_id) as count_no_trans  from Visits v left join Transactions t 
+on v.visit_id=t.visit_id where t.visit_id is null group by v.customer_id
+
+197. Rising Temperature
+SELECT id 
+FROM 
+(SELECT id, recordDate, temperature, LAG(recordDate) OVER (ORDER BY recordDate) AS prev_date,
+                                LAG(temperature) OVER (ORDER BY recordDate) AS prev_temp FROM Weather ) AS TempDiff
+WHERE temperature > prev_temp
+  AND DATEDIFF(DAY, prev_date, recordDate) = 1;
+
+1661. Average Time of Process per Machine
+SELECT machine_id,
+ROUND(
+AVG(CASE WHEN activity_type = 'end' THEN timestamp ELSE NULL END) -
+AVG(CASE WHEN activity_type = 'start' THEN timestamp ELSE NULL END),
+3) as processing_time
+from activity
+group by machine_id
+
+577. Employee Bonus
+select e.name, b.bonus from Employee e left join Bonus b 
+on e.empId = b.empId 
+where b.bonus < 1000 or b.bonus is Null;
